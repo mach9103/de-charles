@@ -1,0 +1,39 @@
+id: 04_postgres_taxi_all_months
+namespace: zoomcamp
+
+inputs:
+  - id: taxi
+    type: SELECT
+    values: [yellow, green]
+    defaults: yellow
+  - id: year
+    type: SELECT
+    values: ["2019", "2020"]
+    defaults: "2020"
+
+tasks:
+  - id: download_and_load_all
+    type: io.kestra.plugin.scripts.shell.Commands
+    taskRunner:
+      type: io.kestra.plugin.core.runner.Process
+    commands:
+      - |
+        for month in 01 02 03 04 05 06 07 08 09 10 11 12; do
+          echo "Processing month $month"
+          wget -qO- https://github.com/DataTalksClub/nyc-tlc-data/releases/download/{{inputs.taxi}}/{{inputs.taxi}}_tripdata_{{inputs.year}}-${month}.csv.gz | gunzip > /tmp/data_${month}.csv
+        done
+        
+        # Count total rows
+        wc -l /tmp/data_*.csv | tail -1
+
+  - id: count_total
+    type: io.kestra.plugin.jdbc.postgresql.Query
+    sql: SELECT COUNT(*) as total_rows FROM public.{{inputs.taxi}}_tripdata;
+    fetch: true
+
+pluginDefaults:
+  - type: io.kestra.plugin.jdbc.postgresql
+    values:
+      url: jdbc:postgresql://pgdatabase:5432/ny_taxi
+      username: root
+      password: root
