@@ -51,7 +51,7 @@ group by largest_tip desc
 
 Question 1: 
 docker exec -it mach9103-kestra-1 find /app/storage -type f -name "*yellow_tripdata_2020-12.csv*" -exec ls -lh {} \;
-129M
+Result: 129M
 
 Question 2: 
 variables:
@@ -59,5 +59,40 @@ variables:
 green_tripdata_2020-04.csv
 
 Question 3: 
-Create a new kestra flow that disregards "month" and includes a countRows task. See the 
+Create a new kestra flow that disregards "month" and includes a countRows task. See the file "04_postgres_taxi_all_months"
+Result: 24648511 total
+
+Question 4: 
+Same as above. Result: 1734063 total
+
+Question 5: 
+Include 2021 as a year in the existing kestra flow: 
+-- inputs:
+  - id: taxi
+    type: SELECT
+    displayName: Select taxi type
+    values: [yellow, green]
+    defaults: yellow
+
+  - id: year
+    type: SELECT
+    displayName: Select year
+    values: ["2019", "2020", "2021"]
+    defaults: "2019"
+
+  - id: month
+    type: SELECT
+    displayName: Select month
+    values: ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"]
+    defaults: "01"
+
+Result: 
+
+$ docker exec -it mach9103-pgdatabase-1 psql -U root -d ny_taxi -c "SELECT COUNT(*) FROM public.yellow_tripdata WHERE filename = 'yellow_tripdata_2021-03.csv';"
+  count
+---------
+ 1925152
+(1 row)
+
+Question 6:
 
