@@ -96,3 +96,30 @@ $ docker exec -it mach9103-pgdatabase-1 psql -U root -d ny_taxi -c "SELECT COUNT
 
 Question 6:
 
+# Module 3
+
+Preparation: open Cloud Shell, install python and load the parquet files using the script
+
+Then, go to BigQuery, create a dataset and create two tables: one external and one native
+
+Question 1: 
+Write query: SELECT COUNT(VendorID) FROM `project-ef946217-bbe7-4f91-960.zoomcamp_de_hw3.yellow_taxi_data` LIMIT 1000
+and select it, then see "This query will use xx bytes"
+
+Question 2: 
+Same as above, write query:
+SELECT COUNT(DISTINCT PULocationID) 
+FROM `project-ef946217-bbe7-4f91-960.zoomcamp_de_hw3.yellow_taxi_data`;
+
+Question 4:
+select count(VendorID)
+from `project-ef946217-bbe7-4f91-960.zoomcamp_de_hw3.yellow_taxi_data`
+where fare_amount=0
+
+Question 5: the column that we use for filtering is partionioed, the columns of interest are clustered
+
+Question 6: same as above
+
+Question 7: we created a bucket, hence the GCP Bucket
+
+Question 8: not always, e.g. with small datasets 
